@@ -6,7 +6,7 @@ public class Cup {
     List<Die> dice = new ArrayList<>();
 
     public Cup() {
-        while(dice.size() < 6) {
+        while(dice.size() < 5) {
             dice.add(new Die());
         }
     }

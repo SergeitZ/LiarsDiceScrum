@@ -16,6 +16,7 @@ public class Main {
 
      3) Organize code into classes
             * Refactor methods (shorter)
+                - Create methods in game class that do a specific function
 
 
      4) [Liar System]
@@ -23,6 +24,7 @@ public class Main {
 	 */
 
         Game game = new Game();
+        game.makeBid();
 
     }
 }

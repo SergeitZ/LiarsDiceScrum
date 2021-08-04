@@ -11,20 +11,29 @@ public class Game {
     private final int MIN_PLAYERS = 1;
 
     public Game () {
-        System.out.print("Enter number of players: ");
-        int numberOfPlayers;
-        do {
-            numberOfPlayers = scanner.nextInt();
-            scanner.nextLine();
-        } while (players.size() < MIN_PLAYERS || players.size() > MAX_PLAYERS);
+//        System.out.print("Enter number of players: ");
+//        int numberOfPlayers;
+//        do {
+//            numberOfPlayers = scanner.nextInt();
+//            scanner.nextLine();
+//        } while (players.size() < MIN_PLAYERS || players.size() > MAX_PLAYERS);
+//
+//        while (players.size() < numberOfPlayers) {
+//            System.out.print("Enter name: ");
+//            players.add(new Player(scanner.nextLine().trim()));
+//        }
+    }
 
-        while (players.size() < numberOfPlayers) {
-            System.out.print("Enter name: ");
-            players.add(new Player(scanner.nextLine().trim()));
-        }
+    public void getValidBid() {
 
+    }
+
+    public void makeBid() {
         Cup cup = new Cup();
         cup.roll();
+
+        final int DIE_FACE_VALUE_MAX = 6;
+        final int DIE_FACE_VALUE_MIN = 1;
 
         int[] bidArray = new int[2];
 
@@ -33,28 +42,41 @@ public class Game {
         int numberOfDice2;
         int faceUpValue2;
 
-
         System.out.println("Hand: " + cup.displayCup());
-        System.out.print("Please enter number of dice: ");
-        numberOfDice = scanner.nextInt();
-        bidArray[0] = numberOfDice;
-        System.out.print("Please enter face up value of dice: ");
-        faceUpValue = scanner.nextInt();
-        bidArray[1] = faceUpValue;
-
-        System.out.println("Current bid: \nDice: " + bidArray[0] + " Value: " + bidArray[1]);
 
         while (true) {
-            System.out.print("Please enter second bid\nNumber of dice: ");
+            System.out.print("Enter bid\nNumber of dice: ");
+            numberOfDice = scanner.nextInt();
+            bidArray[0] = numberOfDice;
+            System.out.print("Face value of dice: ");
+            faceUpValue = scanner.nextInt();
+            bidArray[1] = faceUpValue;
+            if (faceUpValue > DIE_FACE_VALUE_MAX
+                    || faceUpValue < DIE_FACE_VALUE_MIN
+                    || numberOfDice > cup.dice.size()
+                    || numberOfDice < 1) {
+                System.out.println("\nPlease enter valid bid\n");
+            } else {
+                System.out.println("\nCurrent bid: \nDice: " + bidArray[0] + "\nValue: " + bidArray[1] + "\n");
+                break;
+            }
+        }
+
+        while (true) {
+            System.out.print("Enter second bid\nNumber of dice: ");
             numberOfDice2 = scanner.nextInt();
             bidArray[0] = numberOfDice2;
-            System.out.print("Second face up value of dice: ");
+            System.out.print("Face value of dice: ");
             faceUpValue2 = scanner.nextInt();
             bidArray[1] = faceUpValue2;
-            if (numberOfDice2 < numberOfDice || faceUpValue2 < faceUpValue) {
-                System.out.println("Please enter valid bid");
+            //TODO: Adjust logic to decline same number of dice and face value
+            if (numberOfDice2 < numberOfDice
+                    || faceUpValue2 < faceUpValue
+                    || numberOfDice2 > cup.dice.size()
+                    || faceUpValue2 > DIE_FACE_VALUE_MAX) {
+                System.out.println("\nPlease enter valid bid\n");
             } else {
-                System.out.println("Current bid: \nDice: " + bidArray[0] + " Value: " + bidArray[1]);
+                System.out.println("\nCurrent bid: \nDice: " + bidArray[0] + "\nValue: " + bidArray[1] + "\n");
                 break;
             }
         }
