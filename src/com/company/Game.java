@@ -5,7 +5,6 @@ import java.util.Scanner;
 
 public class Game {
     Cup cup = new Cup();
-    public Player player;
     public List<Player> players = new ArrayList<>();
     int [] bidArray = new int[2];
     Scanner scanner = new Scanner(System.in);
@@ -35,12 +34,13 @@ public class Game {
     //TODO: implement challenge previous bid system
     public void turn(Player activePlayer) {
         System.out.println("\n" + activePlayer.name + "'s turn.");
-        activePlayer.cup.roll();
+//        activePlayer.cup.roll();
         makeBid(activePlayer);
     }
-
+    // All players need to roll their cup before the first player takes his turn
     public void round() {
         for (Player activePlayer : players) {
+            activePlayer.cup.roll();
             turn(activePlayer);
         }
     }
