@@ -49,6 +49,7 @@ public class Game {
         while (players.size() > 1) {
             round();
         }
+        System.out.println("GAME OVER!!!\n" + players.get(0).name + " wins!");
     }
 
     //TODO: implement challenge previous bid system
@@ -57,6 +58,7 @@ public class Game {
     }
 
     public void round() {
+        diceMap.clear();
         for (Player player : players) {
             player.cup.roll();
             for (Die die : player.cup.dice) {
@@ -67,18 +69,9 @@ public class Game {
                 }
             }
         }
+
         //TODO: for debugging purposes
-        revealTable();
-        for (int i = 0; i < players.size(); i++) {
-            Player activePlayer = players.get(i);
-            turn(activePlayer);
-            if (i == 0) {
-                makeBid(activePlayer);
-            } else {
-                Player previousPlayer = players.get(i-1);
-                challengeBid(activePlayer, previousPlayer);
-            }
-        }
+//        revealTable();
 
         int i = 0;
         int turn = 0;
@@ -94,8 +87,10 @@ public class Game {
             } else {
                 roundContinues = challengeBid(activePlayer, previousPlayer);
             }
+
             previousPlayer = activePlayer;
             turn++;
+
             if (i == players.size() - 1) {
                i = 0;
             } else {
@@ -141,13 +136,18 @@ public class Game {
 
     public void callLiar(Player activePlayer, Player previousPlayer) {
         revealTable();
-        if (diceMap.get(bidArray[1]) != bidArray[0]) {
+        if (diceMap.get(bidArray[1]) < bidArray[0]) {
             System.out.println("Busted! " + previousPlayer.name + " loses a die!");
             previousPlayer.cup.dice.remove(0);
-            System.out.println(previousPlayer.cup.displayCup());
+            if (previousPlayer.cup.dice.size() == 0) {
+                players.remove(previousPlayer);
+            }
         } else {
             System.out.println("Truth! " + activePlayer.name + " losses a die!");
             activePlayer.cup.dice.remove(0);
+            if (activePlayer.cup.dice.size() == 0) {
+                players.remove(activePlayer);
+            }
             System.out.println(activePlayer.cup.displayCup());
         }
     }
@@ -157,7 +157,7 @@ public class Game {
         System.out.println("\nFollow up bid");
         System.out.println("Hand: " + activePlayer.cup.displayCup());
         bidArray[0] = getValidBid("Enter dice amount: ", bidArray[0], MAX_DICE_ALLOWED * players.size());
-        bidArray[1] = getValidBid("Enter face value: ", bidArray[1], MAX_DICE_ALLOWED);
+        bidArray[1] = getValidBid("Enter face value: ", bidArray[1], 6);
         System.out.println("\nCurrent bid:\nDice:" + bidArray[0] + "\nValue:" + bidArray[1]);
     }
 }
