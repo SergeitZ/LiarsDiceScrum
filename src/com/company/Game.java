@@ -1,5 +1,8 @@
 package com.company;
+import javax.swing.*;
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 public class Game {
     Cup cup = new Cup();
@@ -10,17 +13,10 @@ public class Game {
     int MAX_DICE_ALLOWED = cup.dice.size();
     private final int MAX_PLAYERS = 6;
     private final int MIN_PLAYERS = 1;
+    public static final String TEXT_RESET = "\u001B[0m";
+    public static final String TEXT_RED = "\u001B[31m";
+    public static final String TEXT_GREEN = "\u001B[32m";
 
-    /*
-            for (int num : nums) {
-            if (diceMap.get(num) == null) {
-                diceMap.put(num, 1);
-            } else {
-                diceMap.put(num, diceMap.get(num) + 1);
-            }
-        }
-
-     */
 
     public Game () {
         System.out.print("Enter number of players: ");
@@ -42,6 +38,7 @@ public class Game {
         for (Player player : players) {
             System.out.println(player.name + " " + player.cup.displayCup());
         }
+        System.out.println("Dice frequency: Face value=Occurrences");
         System.out.println(diceMap);
     }
 
@@ -52,7 +49,7 @@ public class Game {
         System.out.println("GAME OVER!!!\n" + players.get(0).name + " wins!");
     }
 
-    //TODO: implement challenge previous bid system
+
     public void turn(Player activePlayer) {
         System.out.println("\n" + activePlayer.name + "'s turn.");
     }
@@ -98,7 +95,8 @@ public class Game {
             }
         }
     }
-
+    //TODO: Do not check face up value if die amount goes up
+    //TODO: if any input is invalid ask both questions again
     public int getValidBid(String prompt, int min, int max) {
         int value;
         while (true) {
@@ -137,13 +135,13 @@ public class Game {
     public void callLiar(Player activePlayer, Player previousPlayer) {
         revealTable();
         if (diceMap.get(bidArray[1]) < bidArray[0]) {
-            System.out.println("Busted! " + previousPlayer.name + " loses a die!");
+            System.out.println(TEXT_RED + "Busted! " + previousPlayer.name + " loses a die!" + TEXT_RESET);
             previousPlayer.cup.dice.remove(0);
             if (previousPlayer.cup.dice.size() == 0) {
                 players.remove(previousPlayer);
             }
         } else {
-            System.out.println("Truth! " + activePlayer.name + " losses a die!");
+            System.out.println(TEXT_GREEN + "Truth! " + activePlayer.name + " losses a die!" + TEXT_RESET);
             activePlayer.cup.dice.remove(0);
             if (activePlayer.cup.dice.size() == 0) {
                 players.remove(activePlayer);
