@@ -6,7 +6,7 @@ public class Cup {
     List<Die> dice = new ArrayList<>();
 
 
-    //Use HashMap to store all face up value as keys and number of occurrences as values
+
     public Cup() {
         while(dice.size() < 5) {
             dice.add(new Die());

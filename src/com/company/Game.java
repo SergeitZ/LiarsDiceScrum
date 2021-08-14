@@ -38,8 +38,7 @@ public class Game {
         for (Player player : players) {
             System.out.println(player.name + " " + player.cup.displayCup());
         }
-        System.out.println("Dice frequency: Face value=Occurrences");
-        System.out.println(diceMap);
+        System.out.println("Dice frequency: " + diceMap);
     }
 
     public void play() {
@@ -95,6 +94,7 @@ public class Game {
             }
         }
     }
+
     //TODO: Do not check face up value if die amount goes up
     //TODO: if any input is invalid ask both questions again
     public int getValidBid(String prompt, int min, int max) {
@@ -109,7 +109,6 @@ public class Game {
         return value;
     }
 
-
     public void makeBid(Player activePlayer) {
 
         System.out.println("Hand: " + activePlayer.cup.displayCup());
@@ -118,7 +117,16 @@ public class Game {
         System.out.println("\nCurrent bid:\nDice:" + bidArray[0] + "\nValue:" + bidArray[1]);
     }
 
+    public void followUpBid(Player activePlayer) {
+        System.out.println("\nFollow up bid");
+        System.out.println("Hand: " + activePlayer.cup.displayCup());
+        bidArray[0] = getValidBid("Enter dice amount: ", bidArray[0], MAX_DICE_ALLOWED * players.size());
+        bidArray[1] = getValidBid("Enter face value: ", bidArray[1], 6);
+        System.out.println("\nCurrent bid:\nDice:" + bidArray[0] + "\nValue:" + bidArray[1]);
+    }
+
     public boolean challengeBid(Player activePlayer, Player previousPlayer) {
+        System.out.println(activePlayer.name + "'s hand: " + activePlayer.cup.displayCup());
         System.out.println("Would you like to challenge " + previousPlayer.name + "'s bid? Y/N");
         scanner.nextLine();
         String input = scanner.nextLine();
@@ -148,14 +156,5 @@ public class Game {
             }
             System.out.println(activePlayer.cup.displayCup());
         }
-    }
-
-
-    public void followUpBid(Player activePlayer) {
-        System.out.println("\nFollow up bid");
-        System.out.println("Hand: " + activePlayer.cup.displayCup());
-        bidArray[0] = getValidBid("Enter dice amount: ", bidArray[0], MAX_DICE_ALLOWED * players.size());
-        bidArray[1] = getValidBid("Enter face value: ", bidArray[1], 6);
-        System.out.println("\nCurrent bid:\nDice:" + bidArray[0] + "\nValue:" + bidArray[1]);
     }
 }
