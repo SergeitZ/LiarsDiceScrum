@@ -1,6 +1,4 @@
 package com.company;
-import javax.swing.*;
-import java.awt.*;
 import java.util.*;
 import java.util.List;
 
@@ -8,17 +6,21 @@ public class Game {
     Cup cup = new Cup();
     public List<Player> players = new ArrayList<>();
     public HashMap<Integer, Integer> diceMap = new HashMap<>();
-    int [] bidArray = new int[2];
     Scanner scanner = new Scanner(System.in);
     int MAX_DICE_ALLOWED = cup.dice.size();
-    private final int MAX_PLAYERS = 6;
-    private final int MIN_PLAYERS = 1;
+    private int PREVIOUS_DICE_BID = 0;
+    private int PREVIOUS_FACE_BID = 0;
+    private int CURRENT_DICE_BID = 0;
+    private int CURRENT_FACE_BID = 0;
     public static final String TEXT_RESET = "\u001B[0m";
     public static final String TEXT_RED = "\u001B[31m";
     public static final String TEXT_GREEN = "\u001B[32m";
+    public static final String TEXT_ORANGE = "\033[38;5;166m";
 
 
     public Game () {
+        final int MAX_PLAYERS = 6;
+        final int MIN_PLAYERS = 1;
         System.out.print("Enter number of players: ");
         int numberOfPlayers;
         do {
@@ -95,34 +97,46 @@ public class Game {
         }
     }
 
-    //TODO: Do not check face up value if die amount goes up
-    //TODO: if any input is invalid ask both questions again
-    public int getValidBid(String prompt, int min, int max) {
-        int value;
+    public int[] getValidBid(String promptDice, String promptFace, int minDice, int minFace) {
+        int[] values = new int[2];
         while (true) {
-            System.out.print(prompt);
-            value = scanner.nextInt();
-            if (value >= min && value <= max)
+            System.out.print(promptDice);
+            values[0] = scanner.nextInt();
+            System.out.print(promptFace);
+            values[1] = scanner.nextInt();
+            if (values[0] > minDice && // Changes dice amount
+                    values[0] <= MAX_DICE_ALLOWED * players.size() &&
+                    values[1] >= minFace &&
+                    values[1] <= 6) {
                 break;
+            } else if (values[0] >= 1 && // Changes face amount
+                    values[0] < MAX_DICE_ALLOWED * players.size() &&
+                    values[1] > minFace &&
+                    values[1] <= 6) {
+                break;
+            }
             System.out.println("Please enter valid bid");
         }
-        return value;
+        return values;
     }
 
     public void makeBid(Player activePlayer) {
-
         System.out.println("Hand: " + activePlayer.cup.displayCup());
-        bidArray[0] = getValidBid("Enter dice amount: ", 1, MAX_DICE_ALLOWED * players.size());
-        bidArray[1] = getValidBid("Enter face value: ", 1, 6);
-        System.out.println("\nCurrent bid:\nDice:" + bidArray[0] + "\nValue:" + bidArray[1]);
+        int[] bidArray = getValidBid("Enter dice amount: ", "Enter face value: ", 0, 0);
+        PREVIOUS_DICE_BID = bidArray[0];
+        PREVIOUS_FACE_BID = bidArray[1];
+        System.out.println(TEXT_ORANGE + "\nCurrent bid:\nDice:" + PREVIOUS_DICE_BID + "\nValue:" + PREVIOUS_FACE_BID + TEXT_RESET);
     }
 
     public void followUpBid(Player activePlayer) {
         System.out.println("\nFollow up bid");
         System.out.println("Hand: " + activePlayer.cup.displayCup());
-        bidArray[0] = getValidBid("Enter dice amount: ", bidArray[0], MAX_DICE_ALLOWED * players.size());
-        bidArray[1] = getValidBid("Enter face value: ", bidArray[1], 6);
-        System.out.println("\nCurrent bid:\nDice:" + bidArray[0] + "\nValue:" + bidArray[1]);
+        int[] bidArray = getValidBid("Enter dice amount: ", "Enter face value: ", PREVIOUS_DICE_BID, PREVIOUS_FACE_BID);
+        CURRENT_DICE_BID = bidArray[0];
+        CURRENT_FACE_BID = bidArray[1];
+        System.out.println(TEXT_ORANGE + "\nCurrent bid:\nDice:" + CURRENT_DICE_BID + "\nValue:" + CURRENT_FACE_BID + TEXT_RESET);
+        PREVIOUS_DICE_BID = CURRENT_DICE_BID;
+        PREVIOUS_FACE_BID = CURRENT_FACE_BID;
     }
 
     public boolean challengeBid(Player activePlayer, Player previousPlayer) {
@@ -142,7 +156,7 @@ public class Game {
 
     public void callLiar(Player activePlayer, Player previousPlayer) {
         revealTable();
-        if (diceMap.get(bidArray[1]) < bidArray[0]) {
+        if (!diceMap.containsKey(PREVIOUS_FACE_BID) || diceMap.get(PREVIOUS_FACE_BID) < PREVIOUS_DICE_BID) {
             System.out.println(TEXT_RED + "Busted! " + previousPlayer.name + " loses a die!" + TEXT_RESET);
             previousPlayer.cup.dice.remove(0);
             if (previousPlayer.cup.dice.size() == 0) {
