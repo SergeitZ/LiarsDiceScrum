@@ -145,6 +145,9 @@ public class Game {
                 return false;
             case "N":
                 followUpBid(activePlayer);
+            default:
+                //TODO: Ask for user input again if anything other than y or n
+                System.out.println("Please enter Y or N");
         }
         return true;
     }
