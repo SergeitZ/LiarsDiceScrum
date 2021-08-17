@@ -8,10 +8,10 @@ public class Game {
     public HashMap<Integer, Integer> diceMap = new HashMap<>();
     Scanner scanner = new Scanner(System.in);
     int MAX_DICE_ALLOWED = cup.dice.size();
-    private int PREVIOUS_DICE_BID = 0;
-    private int PREVIOUS_FACE_BID = 0;
-    private int CURRENT_DICE_BID = 0;
-    private int CURRENT_FACE_BID = 0;
+    private int previousDiceBid = 0;
+    private int previousFaceBid = 0;
+    private int currentDiceBid = 0;
+    private int currentFaceBid = 0;
     public static final String TEXT_RESET = "\u001B[0m";
     public static final String TEXT_RED = "\u001B[31m";
     public static final String TEXT_GREEN = "\u001B[32m";
@@ -50,11 +50,6 @@ public class Game {
         System.out.println("GAME OVER!!!\n" + players.get(0).name + " wins!");
     }
 
-
-    public void turn(Player activePlayer) {
-        System.out.println("\n" + activePlayer.name + "'s turn.");
-    }
-
     public void round() {
         diceMap.clear();
         for (Player player : players) {
@@ -79,7 +74,7 @@ public class Game {
 
         while (roundContinues) {
             Player activePlayer = players.get(i);
-            turn(activePlayer);
+            System.out.println("\n" + activePlayer.name + "'s turn.");
             if (turn == 0) {
                 makeBid(activePlayer);
             } else {
@@ -123,20 +118,20 @@ public class Game {
     public void makeBid(Player activePlayer) {
         System.out.println("Hand: " + activePlayer.cup.displayCup());
         int[] bidArray = getValidBid("Enter dice amount: ", "Enter face value: ", 0, 0);
-        PREVIOUS_DICE_BID = bidArray[0];
-        PREVIOUS_FACE_BID = bidArray[1];
-        System.out.println(TEXT_ORANGE + "\nCurrent bid:\nDice:" + PREVIOUS_DICE_BID + "\nValue:" + PREVIOUS_FACE_BID + TEXT_RESET);
+        previousDiceBid = bidArray[0];
+        previousFaceBid = bidArray[1];
+        System.out.println(TEXT_ORANGE + "\nCurrent bid:\nDice:" + previousDiceBid + "\nValue:" + previousFaceBid + TEXT_RESET);
     }
 
     public void followUpBid(Player activePlayer) {
         System.out.println("\nFollow up bid");
         System.out.println("Hand: " + activePlayer.cup.displayCup());
-        int[] bidArray = getValidBid("Enter dice amount: ", "Enter face value: ", PREVIOUS_DICE_BID, PREVIOUS_FACE_BID);
-        CURRENT_DICE_BID = bidArray[0];
-        CURRENT_FACE_BID = bidArray[1];
-        System.out.println(TEXT_ORANGE + "\nCurrent bid:\nDice:" + CURRENT_DICE_BID + "\nValue:" + CURRENT_FACE_BID + TEXT_RESET);
-        PREVIOUS_DICE_BID = CURRENT_DICE_BID;
-        PREVIOUS_FACE_BID = CURRENT_FACE_BID;
+        int[] bidArray = getValidBid("Enter dice amount: ", "Enter face value: ", previousDiceBid, previousFaceBid);
+        currentDiceBid = bidArray[0];
+        currentFaceBid = bidArray[1];
+        System.out.println(TEXT_ORANGE + "\nCurrent bid:\nDice:" + currentDiceBid + "\nValue:" + currentFaceBid + TEXT_RESET);
+        previousDiceBid = currentDiceBid;
+        previousFaceBid = currentFaceBid;
     }
 
     public boolean challengeBid(Player activePlayer, Player previousPlayer) {
@@ -156,7 +151,7 @@ public class Game {
 
     public void callLiar(Player activePlayer, Player previousPlayer) {
         revealTable();
-        if (!diceMap.containsKey(PREVIOUS_FACE_BID) || diceMap.get(PREVIOUS_FACE_BID) < PREVIOUS_DICE_BID) {
+        if (!diceMap.containsKey(previousFaceBid) || diceMap.get(previousFaceBid) < previousDiceBid) {
             System.out.println(TEXT_RED + "Busted! " + previousPlayer.name + " loses a die!" + TEXT_RESET);
             previousPlayer.cup.dice.remove(0);
             if (previousPlayer.cup.dice.size() == 0) {
